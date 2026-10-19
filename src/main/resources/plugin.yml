@@ -4,3 +4,16 @@ main: dev.artifabrian.legitjustwarps.LegitJustWarps
 api-version: '26.3'
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:2.4.21
+permissions:
+  ljw.admin:
+    default: op
+    children:
+      ljw.warp: true
+      ljw.setwarp: true
+      ljw.delwarp: true
+  ljw.warp:
+    default: true
+  ljw.setwarp:
+    default: op
+  ljw.delwarp:
+    default: op

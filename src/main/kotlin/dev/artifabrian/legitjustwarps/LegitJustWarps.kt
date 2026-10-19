@@ -20,6 +20,8 @@ class LegitJustWarps : JavaPlugin() {
         warps = YamlConfiguration.loadConfiguration(file)
 
         registerCommand("setwarp", object : BasicCommand {
+            override fun permission() = "ljw.setwarp"
+
             override fun execute(source: CommandSourceStack, args: Array<String>) {
                 val player = source.executor as? Player ?: return
                 val name = args.singleOrNull()?.lowercase()?.takeIf { "." !in it } ?: return usage(source, "/setwarp <warp>")
@@ -34,6 +36,8 @@ class LegitJustWarps : JavaPlugin() {
         })
 
         registerCommand("delwarp", object : BasicCommand {
+            override fun permission() = "ljw.delwarp"
+
             override fun execute(source: CommandSourceStack, args: Array<String>) {
                 val name = args.singleOrNull()?.lowercase() ?: return usage(source, "/delwarp <warp>")
                 if (!warps.contains(name)) return notFound(source, name)
@@ -46,6 +50,8 @@ class LegitJustWarps : JavaPlugin() {
         })
 
         registerCommand("warp", object : BasicCommand {
+            override fun permission() = "ljw.warp"
+
             override fun execute(source: CommandSourceStack, args: Array<String>) {
                 val player = source.executor as? Player ?: return
                 val name = args.singleOrNull()?.lowercase() ?: return usage(source, "/warp <warp>")
