@@ -6,14 +6,14 @@ libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:2.4.21
 permissions:
   ljw.admin:
-    default: op
+    default: false
     children:
       ljw.warp: true
       ljw.setwarp: true
       ljw.delwarp: true
   ljw.warp:
-    default: true
+    default: false
   ljw.setwarp:
-    default: op
+    default: false
   ljw.delwarp:
-    default: op
+    default: false
