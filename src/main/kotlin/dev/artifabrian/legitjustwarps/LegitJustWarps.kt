@@ -23,8 +23,8 @@ class LegitJustWarps : JavaPlugin() {
             override fun permission() = "ljw.setwarp"
 
             override fun execute(source: CommandSourceStack, args: Array<String>) {
-                val player = source.executor as? Player ?: return
-                val name = args.singleOrNull()?.lowercase()?.takeIf { "." !in it } ?: return usage(source, "/setwarp <warp>")
+                val player = source.executor as? Player ?: return playersOnly(source)
+                val name = warpName(args) ?: return usage(source, "/setwarp <warp>")
                 val loc = player.location
                 warps.set("$name.world", loc.world.name)
                 warps.set("$name.x", loc.x)
@@ -39,8 +39,8 @@ class LegitJustWarps : JavaPlugin() {
             override fun permission() = "ljw.delwarp"
 
             override fun execute(source: CommandSourceStack, args: Array<String>) {
-                val name = args.singleOrNull()?.lowercase() ?: return usage(source, "/delwarp <warp>")
-                if (!warps.contains(name)) return notFound(source, name)
+                val name = warpName(args) ?: return usage(source, "/delwarp <warp>")
+                if (!warps.isConfigurationSection(name)) return notFound(source, name)
                 warps.set(name, null)
                 warps.save(file)
                 source.sender.sendMessage(Component.text("Warp $name deleted.", NamedTextColor.GREEN))
@@ -53,8 +53,8 @@ class LegitJustWarps : JavaPlugin() {
             override fun permission() = "ljw.warp"
 
             override fun execute(source: CommandSourceStack, args: Array<String>) {
-                val player = source.executor as? Player ?: return
-                val name = args.singleOrNull()?.lowercase() ?: return usage(source, "/warp <warp>")
+                val player = source.executor as? Player ?: return playersOnly(source)
+                val name = warpName(args) ?: return usage(source, "/warp <warp>")
                 val section = warps.getConfigurationSection(name) ?: return notFound(source, name)
                 val world = server.getWorld(section.getString("world") ?: "")
                     ?: return source.sender.sendMessage(Component.text("World for warp $name is not loaded.", NamedTextColor.RED))
@@ -71,6 +71,12 @@ class LegitJustWarps : JavaPlugin() {
         val prefix = args.firstOrNull()?.lowercase() ?: ""
         return warps.getKeys(false).filter { it.startsWith(prefix) }
     }
+
+    // Dots are YAML path separators, so a name containing one would address a warp's fields instead of the warp itself
+    private fun warpName(args: Array<String>) = args.singleOrNull()?.lowercase()?.takeIf { "." !in it }
+
+    private fun playersOnly(source: CommandSourceStack) =
+        source.sender.sendMessage(Component.text("Only players can use this command.", NamedTextColor.RED))
 
     private fun usage(source: CommandSourceStack, text: String) =
         source.sender.sendMessage(Component.text("Usage: $text", NamedTextColor.RED))
